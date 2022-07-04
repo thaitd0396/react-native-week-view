@@ -58,7 +58,6 @@ export default class WeekView extends Component {
     this.header = null;
     this.pageOffset = 2;
     this.currentPageIndex = this.pageOffset;
-    this.eventsGridScrollX = new Animated.Value(0);
 
     const initialDates = this.calculatePagesDates(
       props.selectedDate,
@@ -83,9 +82,6 @@ export default class WeekView extends Component {
   componentDidMount() {
     requestAnimationFrame(() => {
       this.scrollToVerticalStart();
-    });
-    this.eventsGridScrollX.addListener((position) => {
-      this.header.scrollToOffset({ offset: position.value, animated: false });
     });
 
     this.windowListener = Dimensions.addEventListener('change', ({ window }) =>
@@ -137,7 +133,6 @@ export default class WeekView extends Component {
   }
 
   componentWillUnmount() {
-    this.eventsGridScrollX.removeAllListeners();
     if (this.windowListener) {
       this.windowListener.remove();
     }
@@ -322,6 +317,15 @@ export default class WeekView extends Component {
     const newPage = Math.round((position / innerWidth) * initialDates.length);
     const movedPages = newPage - this.currentPageIndex;
     this.currentPageIndex = newPage;
+
+    this.eventsGrid.scrollToOffset({
+      offset: position,
+      animated: false,
+    });
+    this.header.scrollToOffset({
+      offset: position,
+      animated: false,
+    });
 
     if (movedPages === 0) {
       return;
@@ -508,21 +512,13 @@ export default class WeekView extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Title
-            showTitle={showTitle}
-            style={headerStyle}
-            textStyle={headerTextStyle}
-            numberOfDays={numberOfDays}
-            selectedDate={currentMoment}
-            onMonthPress={onMonthPress}
-            width={timeLabelsWidth}
-          />
+          <View style={[headerStyle, { width: timeLabelsWidth }]} />
           <VirtualizedList
             horizontal
             pagingEnabled
             inverted={horizontalInverted}
             showsHorizontalScrollIndicator={false}
-            scrollEnabled={false}
+            scrollEnabled={!fixedHorizontally}
             ref={this.headerRef}
             data={initialDates}
             getItem={(data, index) => data[index]}
@@ -551,6 +547,9 @@ export default class WeekView extends Component {
                 />
               );
             }}
+            onMomentumScrollBegin={this.scrollBegun}
+            onMomentumScrollEnd={this.scrollEnded}
+            scrollEventThrottle={32}
           />
         </View>
         {isRefreshing && RefreshComponent && (
@@ -619,18 +618,6 @@ export default class WeekView extends Component {
               onMomentumScrollBegin={this.scrollBegun}
               onMomentumScrollEnd={this.scrollEnded}
               scrollEventThrottle={32}
-              onScroll={Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        x: this.eventsGridScrollX,
-                      },
-                    },
-                  },
-                ],
-                { useNativeDriver: false },
-              )}
               ref={this.eventsGridRef}
               windowSize={this.windowSize}
               initialNumToRender={this.windowSize}

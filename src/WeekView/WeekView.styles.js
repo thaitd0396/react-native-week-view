@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     flexDirection: 'row',
+    backgroundColor: 'white',
   },
   headerContainer: {
     flexDirection: 'row',

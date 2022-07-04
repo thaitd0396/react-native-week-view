@@ -1,13 +1,13 @@
 import { Dimensions } from 'react-native';
 import moment from 'moment';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 export const CONTENT_OFFSET = 16;
 export const CONTAINER_HEIGHT = SCREEN_HEIGHT - 60;
 export const DATE_STR_FORMAT = 'YYYY-MM-DD';
 export const availableNumberOfDays = [1, 3, 5, 7];
 
-const TIMES_WIDTH_PERCENTAGE = 18;
+const TIMES_WIDTH_PERCENTAGE = (54 * 100) / SCREEN_WIDTH;
 const PAGE_WIDTH_PERCENTAGE = (100 - TIMES_WIDTH_PERCENTAGE) / 100;
 
 export const computeWeekViewDimensions = (totalWidth, numberOfDays) => {
