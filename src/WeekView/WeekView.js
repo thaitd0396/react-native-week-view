@@ -469,6 +469,7 @@ export default class WeekView extends Component {
       gridRowStyle,
       gridColumnStyle,
       eventContainerStyle,
+      scrollViewContentStyle,
       DayHeaderComponent,
       TodayHeaderComponent,
       formatDateHeader,
@@ -566,7 +567,7 @@ export default class WeekView extends Component {
           onMomentumScrollEnd={this.verticalScrollEnded}
           ref={this.verticalAgendaRef}
         >
-          <View style={styles.scrollViewContent}>
+          <View style={[styles.scrollViewContent, scrollViewContentStyle]}>
             <Times
               times={times}
               textStyle={hourTextStyle}
@@ -648,6 +649,7 @@ WeekView.propTypes = {
   eventContainerStyle: PropTypes.object,
   gridRowStyle: Events.propTypes.gridRowStyle,
   gridColumnStyle: Events.propTypes.gridColumnStyle,
+  scrollViewContentStyle: PropTypes.object,
   selectedDate: PropTypes.instanceOf(Date).isRequired,
   locale: PropTypes.string,
   hoursInDisplay: PropTypes.number,
